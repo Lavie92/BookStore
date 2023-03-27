@@ -10,6 +10,12 @@ namespace BookStoreVer2.Models
     [Table("Book")]
     public partial class Book
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Book()
+        {
+            OrderDetails = new HashSet<OrderDetail>();
+        }
+
         public int Id { get; set; }
 
         [Required]
@@ -27,9 +33,11 @@ namespace BookStoreVer2.Models
         public string Image { get; set; }
 
         public int? CategoryId { get; set; }
-
         public HttpPostedFileBase ImageFile;
 
         public virtual Category Category { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

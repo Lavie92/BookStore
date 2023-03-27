@@ -2,18 +2,20 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BookStoreVer2.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace BookStoreVer2.Areas.Admin.Controllers
 {
     [Authorize(Roles ="Admin")]
     public class BooksController : Controller
     {
-        private BookDBContext db = new BookDBContext();
+        public BookDBContext db = new BookDBContext();
 
         // GET: Admin/Books
         public ActionResult Index()
@@ -51,6 +53,15 @@ namespace BookStoreVer2.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Title,Author,Price,Description,Image,CategoryId")] Book book)
         {
+            book.ImageFile = Request.Files["ImageFile"];
+            if (book.ImageFile != null && book.ImageFile.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(book.ImageFile.FileName);
+                var filePath = Path.Combine(Server.MapPath("~/Content/Images"), fileName);
+                book.ImageFile.SaveAs(filePath);
+                book.Image = "/Content/Images/" + fileName;
+
+            }
             if (ModelState.IsValid)
             {
                 db.Books.Add(book);
@@ -60,6 +71,24 @@ namespace BookStoreVer2.Areas.Admin.Controllers
 
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "CategoryName", book.CategoryId);
             return View(book);
+        }
+
+        public ActionResult add()
+        {
+            for (int i = 7; i < 20; i++)
+            {
+                Book book = new Book();
+                book.Id = i;
+                book.Title = i++.ToString();
+                book.Description = i++.ToString();
+                book.Author = i++.ToString();
+                book.Price = i;
+                book.Image = i.ToString();
+                book.CategoryId = 1;
+                db.Books.Add(book);
+                db.SaveChanges();
+            }
+            return View("Index", "");
         }
 
         // GET: Admin/Books/Edit/5
@@ -85,6 +114,15 @@ namespace BookStoreVer2.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Title,Author,Price,Description,Image,CategoryId")] Book book)
         {
+            book.ImageFile = Request.Files["ImageFile"];
+            if (book.ImageFile != null && book.ImageFile.ContentLength > 0)
+            {
+                var fileName = Path.GetFileName(book.ImageFile.FileName);
+                var filePath = Path.Combine(Server.MapPath("~/Content/Images"), fileName);
+                book.ImageFile.SaveAs(filePath);
+                book.Image = "/Content/Images/" + fileName;
+
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(book).State = EntityState.Modified;

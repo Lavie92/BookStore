@@ -9,6 +9,7 @@
     <link href="~/Content/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -20,16 +21,18 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Trang Chủ", "Index", "Home", new { area = "" }, new
+                @Html.ActionLink("Trang Chủ", "Index", "Books", new { area = "" }, new
                 {
                     @class =
                 "navbar-brand"
                 })
+
             </div>
             <div class="navbar-collapse collapse pull-right">
                 <ul class="nav navbar-nav">
                     @Html.Partial("_LoginPartial")
                 </ul>
+                    @Html.Action("CartSummary", "Cart")
             </div>
         </div>
     </div>

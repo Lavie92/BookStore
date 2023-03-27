@@ -1,4 +1,8 @@
-﻿using System.Web;
+﻿using BundleTransformer.Core.Builders;
+using BundleTransformer.Core.Bundles;
+using BundleTransformer.Core.Orderers;
+using BundleTransformer.Core.Resolvers;
+using System.Web;
 using System.Web.Optimization;
 
 namespace BookStoreVer2

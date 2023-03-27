@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BookStoreVer2.Models;
+using PagedList;
 
 namespace BookStoreVer2.Controllers
 {
@@ -16,14 +17,24 @@ namespace BookStoreVer2.Controllers
         public BookDBContext db = new BookDBContext();
 
         // GET: Books
-        public ActionResult Index()
+        public ActionResult Index(int? page)
         {
-            return View(db.Books.ToList());
+            int pageSize = 5;
+            int pageIndex = page == null? 1 : page.Value;
+            var result = db.Books.ToList().ToPagedList(pageIndex, pageSize);
+            return View(result);
         }
-        public ActionResult GetBookByCategory(int id)
+        public ActionResult GetBookByCategory(int id, int? page)
         {
+            int pageSize = 2;
+            int pageIndex = page == null ? 1 : page.Value;
             var books = db.Books.Where(x => x.CategoryId == id);
-            return View("Index", books.ToList());
+            return View("Index", books.ToList().ToPagedList(pageIndex, pageSize));
+        }
+        public ActionResult Search(string searchKey = "") 
+        {
+            var books = db.Books.Where(x => x.Title.ToLower().Contains(searchKey.ToLower())).ToList();
+            return Json(books, JsonRequestBehavior.AllowGet);
         }
         public ActionResult GetCategory()
         {
@@ -152,11 +163,6 @@ namespace BookStoreVer2.Controllers
             db.Books.Remove(book);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-        [Authorize]
-        public ActionResult AddToCart(int id)
-        {
-            return Content("Thêm rồi nhớ mua nhá 🌚");
         }
         protected override void Dispose(bool disposing)
         {
